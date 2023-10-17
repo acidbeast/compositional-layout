@@ -7,14 +7,22 @@
 
 import UIKit
 
+typealias DataSource = UICollectionViewDiffableDataSource<MainSection, Picture>
+typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<MainSection, Picture>
+
 final class MainVC: UIViewController {
     
-    var viewModel: MainVMProtocol
+    var viewModel: MainViewModel
     var router: MainRouterProtocol
+    
+    lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayout()
+    )
     
     init(
         router: MainRouterProtocol,
-        viewModel: MainVMProtocol
+        viewModel: MainViewModel
     ) {
         self.router = router
         self.viewModel = viewModel
@@ -27,7 +35,30 @@ final class MainVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
+        self.navigationItem.title = "Compositional Layout"
+        setupCollection()
+        registerCells()
+        setupLayout()        
+        setupDataSource()
+        viewModel.configureData()
+    }
+    
+    private func setupDataSource() {
+        viewModel.dataSource = DataSource(
+            collectionView: collectionView,
+            cellProvider: { (collectionView, indexPath, model) -> PictureCellCollectionView in
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: PictureCellCollectionView.identifier,
+                    for: indexPath
+                ) as! PictureCellCollectionView
+                return cell
+            }
+        )
+    }
+    
+    private func setupLayout() {
+        let layout = createLayout()
+        collectionView.setCollectionViewLayout(layout, animated: true)
     }
     
 }

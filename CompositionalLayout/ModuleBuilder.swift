@@ -14,7 +14,7 @@ protocol ModuleBuilderProtocol {
 final class ModuleBuilder: ModuleBuilderProtocol {
     
     func createMainModule(router: MainRouterProtocol) -> UIViewController {
-        let vm = MainVM()
+        let vm = MainViewModelImpl()
         let vc = MainVC(router: router, viewModel: vm)
         return vc
     }
